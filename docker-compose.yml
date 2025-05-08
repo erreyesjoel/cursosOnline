@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:latest
+    container_name: gestorCursos
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: curso_db
+      MYSQL_USER: curso_user
+      MYSQL_PASSWORD: curso_password
+    ports:
+      - "3310:3306"  # Exponemos el puerto 3310 del host al 3306 del contenedor
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "8087:80"  # Exponemos phpMyAdmin en el puerto 8087
+    depends_on:
+      - db
+
+volumes:
+  db_data:
