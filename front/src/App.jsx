@@ -1,11 +1,18 @@
-// App.jsx
-import React from 'react';
+import Header from './Header';
 import Cursos from './Cursos';
+import Footer from './Footer';
+import './index.css';
 
 const App = () => {
   return (
-    <div className="App">
-      <Cursos /> 
+    <div className="layout">
+      <Header />
+      <div className="main-content">
+        <main className="contenido">
+          <Cursos />
+        </main>
+      </div>
+      <Footer />
     </div>
   );
 };
