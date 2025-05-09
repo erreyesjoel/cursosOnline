@@ -26,7 +26,12 @@ const Cursos = () => {
       <h1>Cursos</h1>
       <div className="cursos-container">
         {cursos.length > 0 ? (
-          cursos.map((curso) => (
+          cursos.map((curso) => (  /* 
+        "curso" es el nombre de la variable que representa cada objeto individual del array "cursos".
+        Podríamos llamarla como quisiéramos (por ejemplo: item, elemento, etc.), siempre y cuando seamos consistentes.
+        Luego accedemos a sus propiedades con curso.titulo, curso.descripcion, etc.,
+        que corresponden a los campos que vienen desde la API (y están en la base de datos).
+    */
             <div key={curso.id} className="curso-card">
               {curso.imagen_url && (
                 <img
