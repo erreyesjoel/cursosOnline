@@ -1,11 +1,11 @@
 // App.jsx
-import { useState } from 'react'
+import React from 'react';
 import Cursos from './Cursos';
 
 const App = () => {
   return (
     <div className="App">
-      <Cursos />
+      <Cursos /> 
     </div>
   );
 };
