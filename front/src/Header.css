@@ -1,0 +1,36 @@
+/* Header como sidebar vertical centrado */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100vh;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  display: flex;
+  justify-content: center; /* Centrado vertical */
+  align-items: center;     /* Centrado horizontal si lo necesitas */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  align-items: center; /* Centra los enlaces horizontalmente */
+}
+
+.nav a {
+  color: #ecf0f1;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  transition: background 0.3s;
+  width: 70%;
+  text-align: center;
+}
+
+.nav a:hover {
+  background-color: #34495e;
+}

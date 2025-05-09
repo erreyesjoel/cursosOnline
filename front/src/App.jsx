@@ -1,13 +1,15 @@
-// App.jsx
-import React from 'react';
+import Header from './Header';
 import Cursos from './Cursos';
 
 const App = () => {
   return (
-    <div className="App">
-      <Cursos /> 
-    </div>
+    <>
+      <Header />
+      <main className="contenido">
+        <Cursos />
+      </main>
+    </>
   );
-};
+}
 
 export default App;
