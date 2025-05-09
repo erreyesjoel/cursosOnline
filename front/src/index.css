@@ -39,10 +39,10 @@ h1 {
 
 /* Imagen del curso */
 .curso-card img {
-  width: 100%;
+  width: 50%; /* Ajuste del ancho */
   height: auto;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-bottom: 10px;
   object-fit: cover;
 }
 
