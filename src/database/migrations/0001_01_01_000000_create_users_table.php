@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('usuario')->unique();  // Para el login con nombre de usuario o email
-            $table->string('nombre');          // Nombre (antes 'name')
-            $table->string('apellido');           // Apellido (nuevo campo)
+            $table->string('usuario')->unique();  
+            $table->string('nombre');          
+            $table->string('apellido');           
             $table->string('correo')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
