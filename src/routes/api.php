@@ -14,3 +14,7 @@ Route::get('/cursos', [CursosController::class, 'mostrarCursos']);
 // ruta para registro api post
 
 Route::post('/registro', [AuthController::class, 'registro']);
+
+// ruta login
+
+Route::post('/login', [AuthController::class, 'login']);

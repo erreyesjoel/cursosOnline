@@ -68,4 +68,45 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function login(Request $request)
+{
+    // Validación de los datos del formulario
+    $validator = Validator::make($request->all(), [
+        'usuario' => 'required|string', // Puede ser username o email, mejor asi a mi parecer...
+        'password' => 'required|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    // Intentar autenticar por usuario o correo
+    $credentials = $request->only('usuario', 'password');
+    $field = filter_var($credentials['usuario'], FILTER_VALIDATE_EMAIL) ? 'correo' : 'usuario';
+    
+    // Buscar al usuario
+    $user = User::where($field, $credentials['usuario'])->first();
+
+    // Verificar credenciales
+    if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Credenciales incorrectas'
+        ], 401);
+    }
+
+    // Generar token de acceso
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Inicio de sesión exitoso',
+        'user' => $user->only(['id', 'nombre', 'apellido', 'usuario', 'correo']),
+        'access_token' => $token,
+        'token_type' => 'Bearer'
+    ]);
+}
 }
