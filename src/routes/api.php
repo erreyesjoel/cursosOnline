@@ -18,3 +18,7 @@ Route::post('/registro', [AuthController::class, 'registro']);
 // ruta login
 
 Route::post('/login', [AuthController::class, 'login']);
+
+// ruta logout
+
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
