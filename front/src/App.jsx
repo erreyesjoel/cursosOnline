@@ -1,7 +1,9 @@
 import Header from './Header';
-import Cursos from './Cursos';
 import Footer from './Footer';
+import Cursos from './Cursos';
+import Login from './Login';
 import './index.css';
+import { Routes, Route } from 'react-router-dom';
 
 const App = () => {
   return (
@@ -9,7 +11,10 @@ const App = () => {
       <Header />
       <div className="main-content">
         <main className="contenido">
-          <Cursos />
+          <Routes>
+            <Route path="/" element={<Cursos />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
         </main>
       </div>
       <Footer />
