@@ -13,6 +13,26 @@
   margin-bottom: 1.5rem;
 }
 
+.success-message {
+  color: #2ecc71;
+  background-color: #d5f5e3;
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.submit-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.toggle-btn:disabled {
+  color: #95a5a6;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;

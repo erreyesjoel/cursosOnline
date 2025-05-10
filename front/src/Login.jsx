@@ -4,14 +4,17 @@ import './Login.css';
 const Login = () => {
   const [esRegistro, setEsRegistro] = useState(false);
   const [formData, setFormData] = useState({
+    /* columnas de la tabla backend */
     usuario: '',
     password: '',
     confirmPassword: '', 
     nombre: '',
     apellido: '',
-    email: ''
+    correo: '' 
   });
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,43 +24,98 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
+    setIsLoading(true);
 
-    if (esRegistro) {
-      // Validar que las contraseñas coincidan
-      if (formData.password !== formData.confirmPassword) {
-        setError('Las contraseñas no coinciden');
-        return;
+    try {
+      if (esRegistro) {
+        // Validaciones frontend
+        if (!formData.usuario.trim()) {
+          throw new Error('El nombre de usuario es requerido');
+        }
+        if (formData.password !== formData.confirmPassword) {
+          throw new Error('Las contraseñas no coinciden');
+        }
+
+        // Llamada a la API de registro
+        const response = await fetch('http://127.0.0.1:8001/api/registro', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ // pasamos todos los parametros de la api en la peticion
+            nombre: formData.nombre,
+            apellido: formData.apellido,
+            usuario: formData.usuario,
+            correo: formData.correo, 
+            password: formData.password,
+            password_confirmation: formData.confirmPassword
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.errors 
+              ? Object.entries(data.errors).map(([key, value]) => `${key}: ${value}`).join(', ')
+              : data.message || 'Error en el registro'
+          );
+        }
+
+        setSuccessMessage('Registro exitoso! Redirigiendo...');
+        localStorage.setItem('authToken', data.access_token);
+        localStorage.setItem('userData', JSON.stringify(data.user));
+        
+      } else {
+        // Validación login
+        if (!formData.usuario.trim() || !formData.password) {
+          throw new Error('Usuario y contraseña son requeridos');
+        }
+
+        // Llamada a la API de login
+        const response = await fetch('http://127.0.0.1:8001/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            usuario: formData.usuario,
+            password: formData.password
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Credenciales incorrectas');
+        }
+
+        setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
+        localStorage.setItem('authToken', data.access_token);
+        localStorage.setItem('userData', JSON.stringify(data.user));
       }
-      console.log('Datos de registro:', {
-        nombre: formData.nombre,
-        apellido: formData.apellido,
-        email: formData.email,
-        password: formData.password
-      });
-      // Lógica para registrar al usuario
-    } else {
-      console.log('Datos de login:', { 
-        usuario: formData.usuario, 
-        password: formData.password 
-      });
-      // Lógica para loguear al usuario
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const toggleModo = () => {
     setEsRegistro(!esRegistro);
     setError('');
-    // Limpiar campos al cambiar de modo
+    setSuccessMessage('');
     setFormData({
       usuario: '',
       password: '',
       confirmPassword: '',
       nombre: '',
       apellido: '',
-      email: ''
+      correo: ''
     });
   };
 
@@ -66,6 +124,7 @@ const Login = () => {
       <h2>{esRegistro ? 'Regístrate' : 'Iniciar sesión'}</h2>
       
       {error && <div className="error-message">{error}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
       
       <form onSubmit={handleSubmit} className="login-form">
         {esRegistro ? (
@@ -92,10 +151,20 @@ const Login = () => {
             </div>
             <div className="form-group">
               <input
+                type="text"
+                name="usuario"
+                placeholder="Nombre de usuario"
+                value={formData.usuario}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
                 type="email"
-                name="email"
+                name="correo"
                 placeholder="Correo electrónico"
-                value={formData.email}
+                value={formData.correo}
                 onChange={handleChange}
                 required
               />
@@ -118,7 +187,7 @@ const Login = () => {
           <input
             type="password"
             name="password"
-            placeholder="Contraseña"
+            placeholder="Contraseña (mínimo 6 caracteres)"
             value={formData.password}
             onChange={handleChange}
             required
@@ -140,14 +209,23 @@ const Login = () => {
           </div>
         )}
         
-        <button type="submit" className="submit-btn">
-          {esRegistro ? 'Registrarse' : 'Iniciar sesión'}
+        <button 
+          type="submit" 
+          className="submit-btn"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Procesando...' : esRegistro ? 'Registrarse' : 'Iniciar sesión'}
         </button>
       </form>
       
       <p className="toggle-text">
         {esRegistro ? '¿Ya tienes una cuenta?' : '¿No tienes una cuenta?'}
-        <button type="button" onClick={toggleModo} className="toggle-btn">
+        <button 
+          type="button" 
+          onClick={toggleModo} 
+          className="toggle-btn"
+          disabled={isLoading}
+        >
           {esRegistro ? 'Inicia sesión' : 'Regístrate'}
         </button>
       </p>
