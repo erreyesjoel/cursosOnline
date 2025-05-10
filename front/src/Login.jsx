@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [esRegistro, setEsRegistro] = useState(false);
   const [formData, setFormData] = useState({
-    /* columnas de la tabla backend */
     usuario: '',
     password: '',
     confirmPassword: '', 
     nombre: '',
     apellido: '',
-    correo: '' 
+    correo: ''
   });
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -46,11 +47,11 @@ const Login = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ // pasamos todos los parametros de la api en la peticion
+          body: JSON.stringify({
             nombre: formData.nombre,
             apellido: formData.apellido,
             usuario: formData.usuario,
-            correo: formData.correo, 
+            correo: formData.correo,
             password: formData.password,
             password_confirmation: formData.confirmPassword
           })
@@ -69,6 +70,9 @@ const Login = () => {
         setSuccessMessage('Registro exitoso! Redirigiendo...');
         localStorage.setItem('authToken', data.access_token);
         localStorage.setItem('userData', JSON.stringify(data.user));
+        
+        // Redirigir después de 1.5 segundos
+        setTimeout(() => navigate('/'), 1500);
         
       } else {
         // Validación login
@@ -97,6 +101,9 @@ const Login = () => {
         setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
         localStorage.setItem('authToken', data.access_token);
         localStorage.setItem('userData', JSON.stringify(data.user));
+        
+        // Redirigir después de 1.5 segundos
+        setTimeout(() => navigate('/'), 1500);
       }
     } catch (error) {
       setError(error.message);
