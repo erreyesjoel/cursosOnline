@@ -2,48 +2,46 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Curso;
 
 class CursosSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-  public function run(): void
-{
-    Curso::create([
-        'titulo' => 'curso 1',
-        'descripcion' => 'este es el curso 1',
-        'duracion' => '02:30:00',
-    ]);
+    public function run(): void
+    {
+        Curso::create([
+            'titulo' => 'Introducción a HTML',
+            'descripcion' => 'Aprende la estructura básica de las páginas web con HTML.',
+            'duracion' => '02:30:00',
+            'imagen_url' => 'https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg'
+        ]);
 
-    Curso::create([
-        'titulo' => 'curso 2',
-        'descripcion' => 'este es el curso 2',
-        'duracion' => '05:00:00',
-        'imagen_url' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Fanta_logo_%282009%29.svg/1200px-Fanta_logo_%282009%29.svg.png'
-    ]);
+        Curso::create([
+            'titulo' => 'CSS desde cero',
+            'descripcion' => 'Domina los estilos y el diseño visual de sitios web.',
+            'duracion' => '05:00:00',
+            'imagen_url' => 'https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg'
+        ]);
 
-    Curso::create([
-        'titulo' => 'curso 3',
-        'descripcion' => 'este es el curso 3',
-        'duracion' => '01:15:00',
-    ]);
+        Curso::create([
+            'titulo' => 'JavaScript básico',
+            'descripcion' => 'Descubre cómo hacer tus páginas interactivas usando JavaScript.',
+            'duracion' => '01:15:00',
+            'imagen_url' => 'https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png'
+        ]);
 
-    Curso::create([
-        'titulo' => 'curso 4',
-        'descripcion' => 'este es el curso 4',
-        'duracion' => '03:45:00',
-    ]);
+        Curso::create([
+            'titulo' => 'PHP para principiantes',
+            'descripcion' => 'Empieza a trabajar con lógica de servidor usando PHP.',
+            'duracion' => '03:45:00',
+            'imagen_url' => 'https://upload.wikimedia.org/wikipedia/commons/2/27/PHP-logo.svg'
+        ]);
 
-    Curso::create([
-        'titulo' => 'curso 5',
-        'descripcion' => 'este es el curso 5',
-        'duracion' => '04:10:00',
-    ]);
-}
-
+        Curso::create([
+            'titulo' => 'Proyecto final: Sitio web completo',
+            'descripcion' => 'Aplica lo aprendido creando un sitio con HTML, CSS, JS y PHP.',
+            'duracion' => '04:10:00',
+            'imagen_url' => 'https://upload.wikimedia.org/wikipedia/commons/3/31/Website_Creation_-_2021.svg'
+        ]);
+    }
 }

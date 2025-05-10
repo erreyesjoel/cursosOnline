@@ -8,8 +8,8 @@
   background-color: #2c3e50;
   color: #ecf0f1;
   display: flex;
-  justify-content: center; /* Centrado vertical */
-  align-items: center;     /* Centrado horizontal si lo necesitas */
+  justify-content: center;
+  align-items: center;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -18,7 +18,10 @@
   flex-direction: column;
   gap: 1rem;
   width: 100%;
-  align-items: center; /* Centra los enlaces horizontalmente */
+  align-items: center;
+  height: calc(100% - 40px); /* Ajuste para el espacio del saludo */
+  padding: 20px 0;
+  position: relative;
 }
 
 .nav a {
@@ -33,4 +36,22 @@
 
 .nav a:hover {
   background-color: #34495e;
+}
+
+/* Estilos optimizados para el mensaje (mismo visual) */
+.user-greeting {
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  padding: 360px 0;
+  color: #ecf0f1;
+  font-size: 0.9rem;
+}
+
+.user-greeting span {
+  display: inline-block;
+  background-color: #3498db;
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin-top: 100px;
 }

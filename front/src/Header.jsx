@@ -1,14 +1,29 @@
 import React from 'react';
-import './Header.css'; // Asegúrate de tener este archivo
+import './Header.css';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
+  // Obtener datos del usuario desde localStorage
+  const userData = JSON.parse(localStorage.getItem('userData'));
+  const usuario = userData?.usuario;
+
   return (
     <header className="header">
       <nav className="nav">
-        <a href="#">Inicio</a>
-        <a href="#">Cursos</a>
-        <a href="#">Sobre nosotros</a>
-        <a href="#">Contacto</a>
+        <Link to="/">Inicio</Link>
+        <Link to="/cursos">Cursos</Link>
+        <Link to="/nosotros">Sobre nosotros</Link>
+        <Link to="/contacto">Contacto</Link>
+        
+        {/* Mostrar Login solo si NO hay usuario */}
+        {!usuario && <Link to="/login">Login</Link>}
+        
+        {/* Saludo en la parte inferior */}
+        {usuario && (
+          <div className="user-greeting">
+            <span>¡Hola, {usuario}!</span>
+          </div>
+        )}
       </nav>
     </header>
   );
