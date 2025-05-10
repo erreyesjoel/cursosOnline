@@ -50,6 +50,32 @@ class CursosController extends Controller
             'data' => $curso
         ], 201);
     }
+
+    // actualizar curso
+
+    public function update(Request $request, Curso $curso)
+{
+    $validator = Validator::make($request->all(), [
+        'titulo' => 'sometimes|string|max:255',
+        'descripcion' => 'sometimes|string',
+        'duracion' => 'sometimes|string',
+        'imagen_url' => 'nullable|url'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    $curso->update($request->all());
+
+    return response()->json([
+        'success' => true,
+        'data' => $curso
+    ]);
+}
     /**
      * Eliminar un curso
      */
