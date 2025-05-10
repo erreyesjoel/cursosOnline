@@ -4,6 +4,7 @@ import Cursos from './Cursos';
 import Login from './Login';
 import './index.css';
 import { Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
 
 const App = () => {
   return (
@@ -12,8 +13,16 @@ const App = () => {
       <div className="main-content">
         <main className="contenido">
           <Routes>
-            <Route path="/" element={<Cursos />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={
+              <ProtectedRoute publicRoute>
+                <Cursos />
+              </ProtectedRoute>
+            } />
+            <Route path="/login" element={
+              <ProtectedRoute inverse>
+                <Login />
+              </ProtectedRoute>
+            } />
           </Routes>
         </main>
       </div>

@@ -14,7 +14,9 @@ const Header = () => {
         <Link to="/cursos">Cursos</Link>
         <Link to="/nosotros">Sobre nosotros</Link>
         <Link to="/contacto">Contacto</Link>
-        <Link to="/login">Login</Link>
+        
+        {/* Mostrar Login solo si NO hay usuario */}
+        {!usuario && <Link to="/login">Login</Link>}
         
         {/* Saludo en la parte inferior */}
         {usuario && (
