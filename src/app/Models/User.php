@@ -26,6 +26,7 @@ class User extends Authenticatable
         'apellido',
         'correo',
         'password',
+        'is_admin'
     ];
 
     /**
@@ -53,5 +54,10 @@ class User extends Authenticatable
      public function getNombreCompletoAttribute()
     {
         return "{$this->nombre} {$this->apellido}";
+    }
+
+    public function isAdmin()
+    {
+        return $this->is_admin;
     }
 }
