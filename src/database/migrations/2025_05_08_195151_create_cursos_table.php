@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('cursos', function (Blueprint $table) {
             $table->id();
-            $table->string('titulo', 30);
+            $table->string('titulo', 50);
             $table->text('descripcion', 60);
             $table->time('duracion');
             $table->string('imagen_url', 255)->nullable();
