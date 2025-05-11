@@ -53,7 +53,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Usuario registrado exitosamente',
-            'user' => $user->only(['id', 'nombre', 'apellido', 'usuario', 'correo'. 'is_admin']),
+            'user' => $user->only(['id', 'nombre', 'apellido', 'usuario', 'correo', 'is_admin']),
             'access_token' => $token,
             'token_type' => 'Bearer'
         ], 201);

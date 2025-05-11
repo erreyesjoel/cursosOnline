@@ -22,18 +22,30 @@ const AdminPanel = () => {
 
   // Obtener todos los cursos
   const fetchCursos = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8001/api/admin/cursos', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await response.json();
-      setCursos(data);
-    } catch (error) {
-      console.error('Error al obtener cursos:', error);
+  try {
+    const token = localStorage.getItem('authToken'); // debemos usar el mismo nombre del local storage set item de Login.jsx
+    if (!token) {
+      throw new Error('No hay token de autenticación');
     }
-  };
+
+    const response = await fetch('http://127.0.0.1:8001/api/admin/cursos', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al cargar cursos');
+    }
+
+    const data = await response.json();
+    setCursos(data);
+  } catch (error) {
+    console.error('Error:', error);
+    alert(error.message);
+  }
+};
 
   useEffect(() => {
     fetchCursos();
