@@ -18,6 +18,8 @@ const Header = () => {
         {/* Mostrar Login solo si NO hay usuario */}
         {!usuario && <Link to="/login">Login</Link>}
         
+        {Boolean(userData?.is_admin) && <Link to="/admin">Admin Panel</Link>}
+        
         {/* Saludo en la parte inferior */}
         {usuario && (
           <div className="user-greeting">

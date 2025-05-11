@@ -100,8 +100,10 @@ const Login = () => {
 
         setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
         localStorage.setItem('authToken', data.access_token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
-        
+        localStorage.setItem('userData', JSON.stringify({
+    ...data.user,  // Asegúrate de que data.user incluya is_admin
+    is_admin: data.user.is_admin || false  // Valor por defecto si no existe
+  }));        
         // Redirigir después de 1.5 segundos
         setTimeout(() => navigate('/'), 1500);
       }
