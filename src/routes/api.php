@@ -2,13 +2,23 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
+use Illuminate\Support\Facades\Log;
+use App\Http\Middleware\Authenticate;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+});
+
+Route::middleware('auth:sanctum')->get('/me', [UserController::class, 'me']);
+
+Route::middleware('testauth')->get('/test-middleware', function () {
+    return response()->json(['ok' => true]);
+});
+
 
 Route::get('/cursos', [CursosController::class, 'mostrarCursos']);
 

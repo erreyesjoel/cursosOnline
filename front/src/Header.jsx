@@ -1,11 +1,10 @@
 import React from 'react';
 import './Header.css';
 import { Link } from 'react-router-dom';
+import useAuthUser from './useAuthUser';
 
 const Header = () => {
-  // Obtener datos del usuario desde localStorage
-  const userData = JSON.parse(localStorage.getItem('userData'));
-  const usuario = userData?.usuario;
+  const { user, loading } = useAuthUser();
 
   return (
     <header className="header">
@@ -15,15 +14,18 @@ const Header = () => {
         <Link to="/nosotros">Sobre nosotros</Link>
         <Link to="/contacto">Contacto</Link>
         
-        {/* Mostrar Login solo si NO hay usuario */}
-        {!usuario && <Link to="/login">Login</Link>}
+        {/* Mostrar Login solo si NO hay usuario y no está cargando */}
+        {!loading && !user && <Link to="/login">Login</Link>}
         
-        {Boolean(userData?.is_admin) && <Link to="/admin">Admin Panel</Link>}
-        
+     {/* Mostrar Admin Panel solo si el usuario es admin
+     pongo el 1, porque es un booleano, y para que no salga 0, si no es admin */}
+        {!loading && user && user.is_admin === 1 && (
+          <Link to="/admin">Admin Panel</Link>
+        )}        
         {/* Saludo en la parte inferior */}
-        {usuario && (
+        {!loading && user && (
           <div className="user-greeting">
-            <span>¡Hola, {usuario}!</span>
+            <span>¡Hola, {user.usuario}!</span>
           </div>
         )}
       </nav>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useAuthUser from './useAuthUser';
 
 const AdminPanel = () => {
   const [cursos, setCursos] = useState([]);
@@ -11,42 +12,37 @@ const AdminPanel = () => {
     imagen_url: ''
   });
   const navigate = useNavigate();
+  const { user, loading } = useAuthUser();
 
   // Verificar si el usuario es admin
- useEffect(() => {
-  const userData = JSON.parse(localStorage.getItem('userData'));
-  if (!userData || !userData.is_admin) {  // Si is_admin no existe, redirige
-    navigate('/');
-  }
-}, [navigate]);
+  useEffect(() => {
+    if (!loading && (!user || !user.is_admin)) {
+      navigate('/');
+    }
+  }, [user, loading, navigate]);
 
   // Obtener todos los cursos
   const fetchCursos = async () => {
-  try {
-    const token = localStorage.getItem('authToken'); // debemos usar el mismo nombre del local storage set item de Login.jsx
-    if (!token) {
-      throw new Error('No hay token de autenticación');
+    try {
+      const response = await fetch('http://127.0.0.1:8001/api/admin/cursos', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al cargar cursos');
+      }
+
+      const data = await response.json();
+      setCursos(data);
+    } catch (error) {
+      console.error('Error:', error);
+      alert(error.message);
     }
-
-    const response = await fetch('http://127.0.0.1:8001/api/admin/cursos', {
-  method: 'GET',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  credentials: 'include' // <--- importante
-});
-
-    if (!response.ok) {
-      throw new Error('Error al cargar cursos');
-    }
-
-    const data = await response.json();
-    setCursos(data);
-  } catch (error) {
-    console.error('Error:', error);
-    alert(error.message);
-  }
-};
+  };
 
   useEffect(() => {
     fetchCursos();
@@ -72,9 +68,9 @@ const AdminPanel = () => {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(formData)
       });
 
@@ -94,9 +90,7 @@ const AdminPanel = () => {
       try {
         const response = await fetch(`http://127.0.0.1:8001/api/admin/cursos/${id}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+          credentials: 'include'
         });
         if (response.ok) {
           fetchCursos(); // Actualizar lista
