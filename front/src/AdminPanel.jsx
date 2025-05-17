@@ -29,11 +29,12 @@ const AdminPanel = () => {
     }
 
     const response = await fetch('http://127.0.0.1:8001/api/admin/cursos', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'include' // <--- importante
+});
 
     if (!response.ok) {
       throw new Error('Error al cargar cursos');

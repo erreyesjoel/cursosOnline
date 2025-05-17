@@ -43,36 +43,37 @@ const Login = () => {
 
         // Llamada a la API de registro
         const response = await fetch('http://127.0.0.1:8001/api/registro', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            nombre: formData.nombre,
-            apellido: formData.apellido,
-            usuario: formData.usuario,
-            correo: formData.correo,
-            password: formData.password,
-            password_confirmation: formData.confirmPassword
-          })
-        });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  credentials: 'include', // <-- importante para recibir la cookie
+  body: JSON.stringify({
+    nombre: formData.nombre,
+    apellido: formData.apellido,
+    usuario: formData.usuario,
+    correo: formData.correo,
+    password: formData.password,
+    password_confirmation: formData.confirmPassword
+  })
+});
 
-        const data = await response.json();
+const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error(
-            data.errors 
-              ? Object.entries(data.errors).map(([key, value]) => `${key}: ${value}`).join(', ')
-              : data.message || 'Error en el registro'
-          );
-        }
+if (!response.ok) {
+  throw new Error(
+    data.errors 
+      ? Object.entries(data.errors).map(([key, value]) => `${key}: ${value}`).join(', ')
+      : data.message || 'Error en el registro'
+  );
+}
 
-        setSuccessMessage('Registro exitoso! Redirigiendo...');
-        localStorage.setItem('authToken', data.access_token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
-        
-        // Redirigir después de 1.5 segundos
-        setTimeout(() => navigate('/'), 1500);
+setSuccessMessage('Registro exitoso! Redirigiendo...');
+// Ya no guardo el token en local storage, sino los datos del usuario, gracias a la cookie de sesión
+localStorage.setItem('userData', JSON.stringify(data.user));
+
+// Redirigir después de 1.5 segundos
+setTimeout(() => navigate('/'), 1500);
         
       } else {
         // Validación login
@@ -86,6 +87,7 @@ const Login = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include', // Asegúrate de enviar cookies si es necesario
           body: JSON.stringify({
             usuario: formData.usuario,
             password: formData.password
@@ -99,11 +101,10 @@ const Login = () => {
         }
 
         setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
-        localStorage.setItem('authToken', data.access_token);
         localStorage.setItem('userData', JSON.stringify({
-    ...data.user,  // Asegúrate de que data.user incluya is_admin
-    is_admin: data.user.is_admin || false  // Valor por defecto si no existe
-  }));        
+  ...data.user,
+  is_admin: data.user.is_admin || false
+}));
         // Redirigir después de 1.5 segundos
         setTimeout(() => navigate('/'), 1500);
       }

@@ -100,12 +100,21 @@ class AuthController extends Controller
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
-        'success' => true,
-        'message' => 'Inicio de sesión exitoso',
-        'user' => $user->only(['id', 'nombre', 'apellido', 'usuario', 'correo', 'is_admin']),
-        'access_token' => $token,
-        'token_type' => 'Bearer'
-    ]);
+    'success' => true,
+    'message' => 'Inicio de sesión exitoso',
+    'user' => $user->only(['id', 'nombre', 'apellido', 'usuario', 'correo', 'is_admin']),
+    'token_type' => 'Bearer'
+])->cookie(
+    'auth_token', // nombre de la cookie
+    $token,       // valor del token
+    60 * 24,      // duración en minutos (1 día)
+    null,
+    null,
+    true,         // secure (solo HTTPS en producción)
+    true,         // httpOnly
+    false,        // raw
+    'Strict'      // SameSite
+);
 }
 public function logout(Request $request)
 {
