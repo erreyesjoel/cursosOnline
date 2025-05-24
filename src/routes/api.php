@@ -39,5 +39,5 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function ()
     Route::get('/cursos', [CursosController::class, 'index']);       // GET /admin/cursos (todos los cursos)
     Route::post('/cursos', [CursosController::class, 'store']);      // POST /admin/cursos
     Route::put('/cursos/{curso}', [CursosController::class, 'update']);    // PUT /admin/cursos/{id}
-    Route::delete('/cursos/{curso}', [CursosController::class, 'destroy']); // DELETE /admin/cursos/{id}
+    Route::delete('/cursos/{id}', [CursosController::class, 'destroy'])->where('id', '[0-9]+');
 });

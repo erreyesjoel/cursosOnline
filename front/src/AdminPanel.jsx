@@ -13,10 +13,17 @@ const AdminPanel = () => {
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [cursoAEliminar, setCursoAEliminar] = useState(null);
+  const [notificacion, setNotificacion] = useState(null);
   const navigate = useNavigate();
   const { user, loading } = useAuthUser();
 
-  // Verificar si el usuario es admin, campo is_admin
+  // Mostrar notificación
+  const mostrarNotificacion = (tipo, mensaje) => {
+    setNotificacion({ tipo, mensaje });
+    setTimeout(() => setNotificacion(null), 5000);
+  };
+
+  // Verificar si el usuario es admin
   useEffect(() => {
     if (!loading && (!user || !user.is_admin)) {
       navigate('/');
@@ -42,7 +49,7 @@ const AdminPanel = () => {
       setCursos(data);
     } catch (error) {
       console.error('Error:', error);
-      alert(error.message);
+      mostrarNotificacion('error', error.message);
     }
   };
 
@@ -60,30 +67,48 @@ const AdminPanel = () => {
 
   // Crear o actualizar curso
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const url = cursoEditando 
-      ? `http://127.0.0.1:8001/api/admin/cursos/${cursoEditando.id}`
-      : 'http://127.0.0.1:8001/api/admin/cursos';
-    const method = cursoEditando ? 'PUT' : 'POST';
+  e.preventDefault();
+  const url = cursoEditando 
+    ? `http://127.0.0.1:8001/api/admin/cursos/${cursoEditando.id}`
+    : 'http://127.0.0.1:8001/api/admin/cursos';
+  const method = cursoEditando ? 'PUT' : 'POST';
 
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(formData)
-      });
+  try {
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(formData)
+    });
 
-      if (response.ok) {
-        fetchCursos();
-        resetForm();
-      }
-    } catch (error) {
-      console.error('Error al guardar el curso:', error);
+    // Verificar si la respuesta es JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      throw new Error(text || 'Respuesta no válida del servidor');
     }
-  };
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al procesar la solicitud');
+    }
+
+    fetchCursos();
+    resetForm();
+    mostrarNotificacion('success', 
+      cursoEditando 
+        ? `Curso "${formData.titulo}" actualizado correctamente`
+        : `Curso "${formData.titulo}" creado correctamente`
+    );
+  } catch (error) {
+    console.error('Error:', error);
+    mostrarNotificacion('error', error.message);
+  }
+};
 
   // Resetear formulario
   const resetForm = () => {
@@ -97,28 +122,45 @@ const AdminPanel = () => {
   };
 
   // Mostrar modal de confirmación para eliminar
-  const confirmDelete = (id) => {
-    setCursoAEliminar(id);
-    setShowDeleteModal(true);
-  };
+  // Mostrar modal de confirmación para eliminar
+const confirmDelete = (curso) => {
+  setCursoAEliminar({
+    id: curso.id,
+    curso: curso // Guardamos el objeto completo para mostrar el nombre
+  });
+  setShowDeleteModal(true);
+};
 
   // Eliminar curso confirmado
-  const handleDeleteConfirmed = async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8001/api/admin/cursos/${cursoAEliminar}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-      if (response.ok) {
-        fetchCursos();
-      }
-    } catch (error) {
-      console.error('Error al eliminar el curso:', error);
-    } finally {
-      setShowDeleteModal(false);
-      setCursoAEliminar(null);
+ const handleDeleteConfirmed = async () => {
+  try {
+    console.log('Intentando eliminar curso ID:', cursoAEliminar.id);
+    
+    const response = await fetch(`http://127.0.0.1:8001/api/admin/cursos/${cursoAEliminar.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al eliminar el curso');
     }
-  };
+
+    fetchCursos();
+    mostrarNotificacion('success', data.message); // Usa el mensaje del backend
+  } catch (error) {
+    console.error('Error al eliminar el curso:', error);
+    mostrarNotificacion('error', error.message);
+  } finally {
+    setShowDeleteModal(false);
+    setCursoAEliminar(null);
+  }
+};
 
   // Editar curso (cargar datos en el formulario)
   const handleEdit = (curso) => {
@@ -134,6 +176,13 @@ const AdminPanel = () => {
   return (
     <div className="admin-panel">
       <h2>Panel de Administración</h2>
+      
+      {/* Notificación */}
+      {notificacion && (
+        <div className={`notification ${notificacion.tipo}`}>
+          {notificacion.mensaje}
+        </div>
+      )}
       
       {/* Formulario para crear/editar */}
       <form onSubmit={handleSubmit} className="curso-form">
@@ -158,7 +207,7 @@ const AdminPanel = () => {
           name="duracion"
           value={formData.duracion}
           onChange={handleChange}
-          placeholder="Duración (ej: 2 horas)"
+          placeholder="Duración (ej: 2:00)"
           required
         />
         <input
@@ -190,7 +239,7 @@ const AdminPanel = () => {
               <p>{curso.descripcion}</p>
               <div className="actions">
                 <button onClick={() => handleEdit(curso)} className="edit-btn">Editar</button>
-                <button onClick={() => confirmDelete(curso.id)} className="delete-btn">Eliminar</button>
+                <button onClick={() => confirmDelete(curso)} className="delete-btn">Eliminar</button>
               </div>
             </li>
           ))}
@@ -199,21 +248,21 @@ const AdminPanel = () => {
 
       {/* Modal de confirmación para eliminar */}
       {showDeleteModal && (
-        <div className="modal-overlay">
-          <div className="delete-modal">
-            <h3>Confirmar Eliminación</h3>
-            <p>¿Estás seguro de que deseas eliminar este curso? Esta acción no se puede deshacer.</p>
-            <div className="modal-actions">
-              <button onClick={() => setShowDeleteModal(false)} className="cancel-btn">
-                Cancelar
-              </button>
-              <button onClick={handleDeleteConfirmed} className="confirm-delete-btn">
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className="modal-overlay">
+    <div className="delete-modal">
+      <h3>Confirmar Eliminación</h3>
+      <p>¿Estás seguro de que deseas eliminar el curso <strong>"{cursoAEliminar?.curso?.titulo}"</strong>? Esta acción no se puede deshacer.</p>
+      <div className="modal-actions">
+        <button onClick={() => setShowDeleteModal(false)} className="cancel-btn">
+          Cancelar
+        </button>
+        <button onClick={handleDeleteConfirmed} className="confirm-delete-btn">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

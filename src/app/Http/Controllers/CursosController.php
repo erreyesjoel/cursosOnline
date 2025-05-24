@@ -76,16 +76,24 @@ class CursosController extends Controller
         'data' => $curso
     ]);
 }
-    /**
-     * Eliminar un curso
-     */
-    public function destroy(Curso $curso)
-    {
-        $curso->delete();
-        
+   public function destroy($id)
+{
+    $curso = Curso::find($id);
+    
+    if (!$curso) {
         return response()->json([
-            'success' => true,
-            'message' => 'Curso eliminado correctamente'
-        ], 204);
+            'success' => false,
+            'message' => 'Curso no encontrado'
+        ], 404);
     }
+
+    $titulo = $curso->titulo;
+    $curso->delete();
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Curso "'.$titulo.'" eliminado correctamente',
+        'data' => ['titulo' => $titulo]
+    ], 200);
+}
 }

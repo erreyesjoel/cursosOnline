@@ -14,6 +14,39 @@
   margin-bottom: 2rem;
 }
 
+/* Notificaciones */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+  z-index: 1001;
+  font-weight: bold;
+}
+
+.notification.success {
+  background-color: #2ecc71;
+}
+
+.notification.error {
+  background-color: #e74c3c;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 .curso-form {
   background-color: #f8f9fa;
   padding: 1.5rem;
@@ -56,8 +89,8 @@
 }
 
 .submit-btn {
-  padding: 0.8rem 1.5rem;
   background-color: #3498db;
+  width: 160px;
   color: white;
   border: none;
   border-radius: 6px;
@@ -71,8 +104,8 @@
 }
 
 .cancel-btn {
-  padding: 0.8rem 1.5rem;
   background-color: #95a5a6;
+  width: 160px;
   color: white;
   border: none;
   border-radius: 6px;
@@ -197,7 +230,6 @@
   transition: background-color 0.3s;
 }
 
-/* Hover para el boton de confirmar eliminar */
 .confirm-delete-btn:hover {
   background-color: #c0392b;
 }
