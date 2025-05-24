@@ -11,6 +11,8 @@ const AdminPanel = () => {
     duracion: '',
     imagen_url: ''
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [cursoAEliminar, setCursoAEliminar] = useState(null);
   const navigate = useNavigate();
   const { user, loading } = useAuthUser();
 
@@ -75,29 +77,46 @@ const AdminPanel = () => {
       });
 
       if (response.ok) {
-        fetchCursos(); // Actualizar lista
-        setFormData({ titulo: '', descripcion: '', duracion: '', imagen_url: '' });
-        setCursoEditando(null); // Limpiar edición
+        fetchCursos();
+        resetForm();
       }
     } catch (error) {
       console.error('Error al guardar el curso:', error);
     }
   };
 
-  // Eliminar curso
-  const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar este curso?')) {
-      try {
-        const response = await fetch(`http://127.0.0.1:8001/api/admin/cursos/${id}`, {
-          method: 'DELETE',
-          credentials: 'include'
-        });
-        if (response.ok) {
-          fetchCursos(); // Actualizar lista
-        }
-      } catch (error) {
-        console.error('Error al eliminar el curso:', error);
+  // Resetear formulario
+  const resetForm = () => {
+    setFormData({
+      titulo: '',
+      descripcion: '',
+      duracion: '',
+      imagen_url: ''
+    });
+    setCursoEditando(null);
+  };
+
+  // Mostrar modal de confirmación para eliminar
+  const confirmDelete = (id) => {
+    setCursoAEliminar(id);
+    setShowDeleteModal(true);
+  };
+
+  // Eliminar curso confirmado
+  const handleDeleteConfirmed = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8001/api/admin/cursos/${cursoAEliminar}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        fetchCursos();
       }
+    } catch (error) {
+      console.error('Error al eliminar el curso:', error);
+    } finally {
+      setShowDeleteModal(false);
+      setCursoAEliminar(null);
     }
   };
 
@@ -118,7 +137,7 @@ const AdminPanel = () => {
       
       {/* Formulario para crear/editar */}
       <form onSubmit={handleSubmit} className="curso-form">
-        <h3>{cursoEditando ? 'Editar Curso' : 'Crear Nuevo Curso'}</h3>
+        <h3>{cursoEditando ? `Editando: ${cursoEditando.titulo}` : 'Crear Nuevo Curso'}</h3>
         <input
           type="text"
           name="titulo"
@@ -149,14 +168,16 @@ const AdminPanel = () => {
           onChange={handleChange}
           placeholder="URL de la imagen (opcional)"
         />
-        <button type="submit">
-          {cursoEditando ? 'Actualizar' : 'Crear'}
-        </button>
-        {cursoEditando && (
-          <button type="button" onClick={() => setCursoEditando(null)}>
-            Cancelar
+        <div className="form-actions">
+          <button type="submit" className="submit-btn">
+            {cursoEditando ? 'Actualizar' : 'Crear'}
           </button>
-        )}
+          {(cursoEditando || formData.titulo) && (
+            <button type="button" onClick={resetForm} className="cancel-btn">
+              {cursoEditando ? 'Cancelar Edición' : 'Limpiar Formulario'}
+            </button>
+          )}
+        </div>
       </form>
 
       {/* Lista de cursos con acciones */}
@@ -168,13 +189,31 @@ const AdminPanel = () => {
               <h4>{curso.titulo}</h4>
               <p>{curso.descripcion}</p>
               <div className="actions">
-                <button onClick={() => handleEdit(curso)}>Editar</button>
-                <button onClick={() => handleDelete(curso.id)}>Eliminar</button>
+                <button onClick={() => handleEdit(curso)} className="edit-btn">Editar</button>
+                <button onClick={() => confirmDelete(curso.id)} className="delete-btn">Eliminar</button>
               </div>
             </li>
           ))}
         </ul>
       </div>
+
+      {/* Modal de confirmación para eliminar */}
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="delete-modal">
+            <h3>Confirmar Eliminación</h3>
+            <p>¿Estás seguro de que deseas eliminar este curso? Esta acción no se puede deshacer.</p>
+            <div className="modal-actions">
+              <button onClick={() => setShowDeleteModal(false)} className="cancel-btn">
+                Cancelar
+              </button>
+              <button onClick={handleDeleteConfirmed} className="confirm-delete-btn">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import AdminPanel from './AdminPanel'; // Para el panel del admin, poner su rout
 import './index.css';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
+import './panelAdmin.css'; 
 
 const App = () => {
   return (
