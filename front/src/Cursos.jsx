@@ -1,27 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import api from './services/api'; // Asegúrate de que este archivo exista y esté configurado correctamente
 
 const Cursos = () => {
   const [cursos, setCursos] = useState([]);
   const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
 
-  useEffect(() => {
-    const obtenerCursos = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8001/api/cursos');
-        if (!response.ok) {
-          throw new Error(`Error HTTP: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log('Cursos obtenidos:', data); // depuración
-        setCursos(data);
-      } catch (error) {
-        console.error('Error al cargar los cursos:', error);
-      }
-    };
+useEffect(() => {
+  const obtenerCursos = async () => {
+    try {
+      const data = await api.getData('cursos'); // Usamos la función dentro del objeto api
+      console.log('Cursos obtenidos:', data);
+      setCursos(data);
+    } catch (error) {
+      console.error('Error al cargar los cursos:', error);
+    }
+  };
 
-    obtenerCursos();
-  }, []);
+  obtenerCursos();
+}, []);
 
   const abrirModal = (curso) => {
     setCursoSeleccionado(curso);
@@ -37,12 +34,7 @@ const Cursos = () => {
       <h1>Cursos</h1>
       <div className="cursos-container">
         {cursos.length > 0 ? (
-          cursos.map((curso) => (   /* 
-          "curso" es el nombre de la variable que representa cada objeto individual del array "cursos".
-          Podríamos llamarla como quisiéramos (por ejemplo: item, elemento, etc.), siempre y cuando seamos consistentes.
-          Luego accedemos a sus propiedades con curso.titulo, curso.descripcion, etc.,
-          que corresponden a los campos que vienen desde la API (y están en la base de datos).
-          */
+          cursos.map((curso) => (
             <div key={curso.id} className="curso-card">
               {curso.imagen_url && (
                 <img 
@@ -68,7 +60,6 @@ const Cursos = () => {
         )}
       </div>
 
-      {/* Modal para mostrar detalles completos */}
       {modalAbierto && cursoSeleccionado && (
         <div className="modal-overlay" onClick={cerrarModal}>
           <div className="modal-contenido" onClick={(e) => e.stopPropagation()}>
