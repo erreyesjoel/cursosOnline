@@ -197,6 +197,7 @@
   transition: background-color 0.3s;
 }
 
+/* Hover para el boton de confirmar eliminar */
 .confirm-delete-btn:hover {
   background-color: #c0392b;
 }

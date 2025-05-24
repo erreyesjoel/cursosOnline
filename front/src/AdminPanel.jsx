@@ -16,7 +16,7 @@ const AdminPanel = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuthUser();
 
-  // Verificar si el usuario es admin
+  // Verificar si el usuario es admin, campo is_admin
   useEffect(() => {
     if (!loading && (!user || !user.is_admin)) {
       navigate('/');
