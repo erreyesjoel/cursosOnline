@@ -6,124 +6,121 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-   public function registro(Request $request)
-{
-    // Validación de los datos del formulario
-    $validator = Validator::make($request->all(), [
-        'nombre' => 'required|string|max:50',
-        'apellido' => 'required|string|max:50',
-        'usuario' => 'required|string|max:30|unique:users,usuario',
-        'correo' => 'required|email|max:100|unique:users,correo',
-        'password' => [
-            'required',
-            'string',
-            'min:8',  // Solo longitud mínima de 8
-            'confirmed'
-        ],
-    ], [
-        'password.confirmed' => 'Las contraseñas no coinciden.',
-        'password.min' => 'La contraseña debe tener al menos 8 caracteres.'
-    ]);
-
-    // Si la validación falla, devuelve los errores
-    if ($validator->fails()) {
-        return response()->json([
-            'success' => false,
-            'errors' => $validator->errors()
-        ], 422);
-    }
-
-    // Creación del nuevo usuario
-    try {
-        $user = User::create([
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'usuario' => $request->usuario,
-            'correo' => $request->correo,
-            'password' => Hash::make($request->password)
+    public function registro(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:50',
+            'apellido' => 'required|string|max:50',
+            'usuario' => 'required|string|max:30|unique:users,usuario',
+            'correo' => 'required|email|max:100|unique:users,correo',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed'
+            ],
+        ], [
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.'
         ]);
 
-        // Generar token de acceso
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Usuario registrado exitosamente',
-            'user' => $user->only(['id', 'nombre', 'apellido', 'usuario', 'correo']),
-            'access_token' => $token,
-            'token_type' => 'Bearer'
-        ], 201);
+        try {
+            $user = User::create([
+                'nombre' => $request->nombre,
+                'apellido' => $request->apellido,
+                'usuario' => $request->usuario,
+                'correo' => $request->correo,
+                'password' => Hash::make($request->password)
+            ]);
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al registrar el usuario',
-            'error' => $e->getMessage()
-        ], 500);
+            // Autenticar al usuario recién registrado con el guard web
+            Auth::guard('web')->login($user);
+            $request->session()->regenerate();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario registrado exitosamente',
+                'user' => [
+                    'id' => $user->id,
+                    'nombre' => $user->nombre,
+                    'apellido' => $user->apellido,
+                    'usuario' => $user->usuario,
+                    'correo' => $user->correo,
+                    'is_admin' => $user->is_admin,
+                ],
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar el usuario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
+
     public function login(Request $request)
-{
-    // Validación de los datos del formulario
-    $validator = Validator::make($request->all(), [
-        'usuario' => 'required|string', // Puede ser username o email, mejor asi a mi parecer...
-        'password' => 'required|string',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'usuario' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json([
-            'success' => false,
-            'errors' => $validator->errors()
-        ], 422);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $credentials = $request->only('usuario', 'password');
+        $field = filter_var($credentials['usuario'], FILTER_VALIDATE_EMAIL) ? 'correo' : 'usuario';
+
+        // Usa el guard web aquí
+        if (Auth::guard('web')->attempt([$field => $credentials['usuario'], 'password' => $credentials['password']])) {
+            $request->session()->regenerate();
+            $user = Auth::guard('web')->user();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Inicio de sesión exitoso',
+                'user' => [
+                    'id' => $user->id,
+                    'nombre' => $user->nombre,
+                    'apellido' => $user->apellido,
+                    'usuario' => $user->usuario,
+                    'correo' => $user->correo,
+                    'is_admin' => $user->is_admin,
+                ],
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Credenciales incorrectas'
+            ], 401);
+        }
     }
 
-    // Intentar autenticar por usuario o correo
-    $credentials = $request->only('usuario', 'password');
-    $field = filter_var($credentials['usuario'], FILTER_VALIDATE_EMAIL) ? 'correo' : 'usuario';
-    
-    // Buscar al usuario
-    $user = User::where($field, $credentials['usuario'])->first();
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-    // Verificar credenciales
-    if (!$user || !Hash::check($credentials['password'], $user->password)) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Credenciales incorrectas'
-        ], 401);
-    }
-
-    // Generar token de acceso
-    $token = $user->createToken('auth_token')->plainTextToken;
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Inicio de sesión exitoso',
-        'user' => $user->only(['id', 'nombre', 'apellido', 'usuario', 'correo']),
-        'access_token' => $token,
-        'token_type' => 'Bearer'
-    ]);
-}
-public function logout(Request $request)
-{
-    try {
-        // Revocar el token actual del usuario
-        $request->user()->currentAccessToken()->delete();
-        
         return response()->json([
             'success' => true,
             'message' => 'Sesión cerrada exitosamente'
         ]);
-        
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al cerrar sesión',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 }

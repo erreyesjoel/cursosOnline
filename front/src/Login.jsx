@@ -32,6 +32,10 @@ const Login = () => {
     setIsLoading(true);
 
     try {
+      await fetch('http://127.0.0.1:8001/sanctum/csrf-cookie', {
+      credentials: 'include'
+    });
+
       if (esRegistro) {
         // Validaciones frontend
         if (!formData.usuario.trim()) {
@@ -46,7 +50,9 @@ const Login = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+              'Accept': 'application/json', // <-- añade esto
           },
+          credentials: 'include',
           body: JSON.stringify({
             nombre: formData.nombre,
             apellido: formData.apellido,
@@ -68,10 +74,6 @@ const Login = () => {
         }
 
         setSuccessMessage('Registro exitoso! Redirigiendo...');
-        localStorage.setItem('authToken', data.access_token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
-        
-        // Redirigir después de 1.5 segundos
         setTimeout(() => navigate('/'), 1500);
         
       } else {
@@ -85,7 +87,10 @@ const Login = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+              'Accept': 'application/json', // <-- añade esto
+
           },
+          credentials: 'include',
           body: JSON.stringify({
             usuario: formData.usuario,
             password: formData.password
@@ -99,10 +104,6 @@ const Login = () => {
         }
 
         setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
-        localStorage.setItem('authToken', data.access_token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
-        
-        // Redirigir después de 1.5 segundos
         setTimeout(() => navigate('/'), 1500);
       }
     } catch (error) {
