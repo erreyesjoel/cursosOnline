@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import api from './services/api';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,9 +33,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      await fetch('http://127.0.0.1:8001/sanctum/csrf-cookie', {
-      credentials: 'include'
-    });
+      await api.getCSRF();
 
       if (esRegistro) {
         // Validaciones frontend
@@ -45,67 +44,47 @@ const Login = () => {
           throw new Error('Las contraseñas no coinciden');
         }
 
-        // Llamada a la API de registro
-        const response = await fetch('http://127.0.0.1:8001/api/registro', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-              'Accept': 'application/json', // <-- añade esto
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            nombre: formData.nombre,
-            apellido: formData.apellido,
-            usuario: formData.usuario,
-            correo: formData.correo,
-            password: formData.password,
-            password_confirmation: formData.confirmPassword
-          })
-        });
+            // Llamada a la API de registro usando api.js
+      const data = await api.postData('registro', {
+        nombre: formData.nombre,
+        apellido: formData.apellido,
+        usuario: formData.usuario,
+        correo: formData.correo,
+        password: formData.password,
+        password_confirmation: formData.confirmPassword
+      });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.errors 
-              ? Object.entries(data.errors).map(([key, value]) => `${key}: ${value}`).join(', ')
-              : data.message || 'Error en el registro'
-          );
-        }
-
-        setSuccessMessage('Registro exitoso! Redirigiendo...');
-        setTimeout(() => navigate('/'), 1500);
-        
-      } else {
-        // Validación login
-        if (!formData.usuario.trim() || !formData.password) {
-          throw new Error('Usuario y contraseña son requeridos');
-        }
-
-        // Llamada a la API de login
-        const response = await fetch('http://127.0.0.1:8001/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-              'Accept': 'application/json', // <-- añade esto
-
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            usuario: formData.usuario,
-            password: formData.password
-          })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || 'Credenciales incorrectas');
-        }
-
-        setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
-        setTimeout(() => navigate('/'), 1500);
+      if (data.errors || !data.success) {
+        throw new Error(
+          data.errors
+            ? Object.entries(data.errors).map(([key, value]) => `${key}: ${value}`).join(', ')
+            : data.message || 'Error en el registro'
+        );
       }
+
+      setSuccessMessage('Registro exitoso! Redirigiendo...');
+      setTimeout(() => navigate('/'), 1500);
+
+        
+        } else {
+      if (!formData.usuario.trim() || !formData.password) {
+        throw new Error('Usuario y contraseña son requeridos');
+      }
+
+      // Llamada a la API de login usando api.js
+      const data = await api.postData('login', {
+        usuario: formData.usuario,
+        password: formData.password
+      });
+
+      if (!data.success) {
+        throw new Error(data.message || 'Credenciales incorrectas');
+      }
+
+      setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
+      setTimeout(() => navigate('/'), 1500);
+    }
+
     } catch (error) {
       setError(error.message);
     } finally {
