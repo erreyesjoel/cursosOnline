@@ -1,22 +1,26 @@
 import { useEffect, useState } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function useAuthUser() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8001/api/me', {
-      credentials: 'include'
-    })
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/me`, {
+          credentials: 'include'
+        });
+        const data = res.ok ? await res.json() : null;
         setUser(data || null);
-        setLoading(false);
-      })
-      .catch(() => {
+      } catch {
         setUser(null);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchUser();
   }, []);
 
   return { user, loading };

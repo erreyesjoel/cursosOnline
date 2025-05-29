@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthUser from './useAuthUser';
+import api from './services/api'; // Importar api js
 
 const AdminPanel = () => {
   const [cursos, setCursos] = useState([]);
@@ -31,27 +32,16 @@ const AdminPanel = () => {
   }, [user, loading, navigate]);
 
   // Obtener todos los cursos
-  const fetchCursos = async () => {
+   const fetchCursos = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8001/api/admin/cursos', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al cargar cursos');
-      }
-
-      const data = await response.json();
+      const data = await api.getData('admin/cursos');
       setCursos(data);
     } catch (error) {
       console.error('Error:', error);
       mostrarNotificacion('error', error.message);
     }
   };
+
 
   useEffect(() => {
     fetchCursos();
@@ -67,48 +57,27 @@ const AdminPanel = () => {
 
   // Crear o actualizar curso
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  const url = cursoEditando 
-    ? `http://127.0.0.1:8001/api/admin/cursos/${cursoEditando.id}`
-    : 'http://127.0.0.1:8001/api/admin/cursos';
-  const method = cursoEditando ? 'PUT' : 'POST';
+    e.preventDefault();
+    const endpoint = cursoEditando
+      ? `admin/cursos/${cursoEditando.id}`
+      : 'admin/cursos';
+    const method = cursoEditando ? 'putData' : 'postData';
 
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify(formData)
-    });
+    try {
+      const data = await api[method](endpoint, formData);
 
-    // Verificar si la respuesta es JSON
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      const text = await response.text();
-      throw new Error(text || 'Respuesta no válida del servidor');
+      fetchCursos();
+      resetForm();
+      mostrarNotificacion('success',
+        cursoEditando
+          ? `Curso "${formData.titulo}" actualizado correctamente`
+          : `Curso "${formData.titulo}" creado correctamente`
+      );
+    } catch (error) {
+      console.error('Error:', error);
+      mostrarNotificacion('error', error.message);
     }
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Error al procesar la solicitud');
-    }
-
-    fetchCursos();
-    resetForm();
-    mostrarNotificacion('success', 
-      cursoEditando 
-        ? `Curso "${formData.titulo}" actualizado correctamente`
-        : `Curso "${formData.titulo}" creado correctamente`
-    );
-  } catch (error) {
-    console.error('Error:', error);
-    mostrarNotificacion('error', error.message);
-  }
-};
+  };
 
   // Resetear formulario
   const resetForm = () => {
@@ -121,46 +90,30 @@ const AdminPanel = () => {
     setCursoEditando(null);
   };
 
-  // Mostrar modal de confirmación para eliminar
-  // Mostrar modal de confirmación para eliminar
-const confirmDelete = (curso) => {
-  setCursoAEliminar({
-    id: curso.id,
-    curso: curso // Guardamos el objeto completo para mostrar el nombre
-  });
-  setShowDeleteModal(true);
-};
+    // Mostrar modal de confirmación para eliminar
+  const confirmDelete = (curso) => {
+    setCursoAEliminar({
+      id: curso.id,
+      curso: curso // Guardamos el objeto completo para mostrar el nombre
+    });
+    setShowDeleteModal(true);
+  };
 
   // Eliminar curso confirmado
  const handleDeleteConfirmed = async () => {
-  try {
-    console.log('Intentando eliminar curso ID:', cursoAEliminar.id);
-    
-    const response = await fetch(`http://127.0.0.1:8001/api/admin/cursos/${cursoAEliminar.id}`, {
-      method: 'DELETE',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
-    });
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.message || 'Error al eliminar el curso');
+    try {
+      await api.deleteData(`admin/cursos/${cursoAEliminar.id}`);
+      fetchCursos();
+      mostrarNotificacion('success', 'Curso eliminado correctamente');
+    } catch (error) {
+      console.error('Error al eliminar el curso:', error);
+      mostrarNotificacion('error', error.message);
+    } finally {
+      setShowDeleteModal(false);
+      setCursoAEliminar(null);
     }
+  };
 
-    fetchCursos();
-    mostrarNotificacion('success', data.message); // Usa el mensaje del backend
-  } catch (error) {
-    console.error('Error al eliminar el curso:', error);
-    mostrarNotificacion('error', error.message);
-  } finally {
-    setShowDeleteModal(false);
-    setCursoAEliminar(null);
-  }
-};
 
   // Editar curso (cargar datos en el formulario)
   const handleEdit = (curso) => {

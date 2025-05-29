@@ -14,6 +14,7 @@ const parseJSON = async (response) => {
 
 const getData = async (endpoint) => {
   try {
+    console.log('GET:', `${API_BASE_URL}/${endpoint}`); // <-- Añade esto
     const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
       credentials: 'include'
     });
