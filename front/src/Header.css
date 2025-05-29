@@ -24,6 +24,21 @@
   position: relative;
 }
 
+/* Agrega al final del archivo */
+.logout-btn {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+.logout-btn:hover {
+  background: #c0392b;
+}
 .nav a {
   color: #ecf0f1;
   text-decoration: none;

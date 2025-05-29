@@ -1,10 +1,23 @@
 import React from 'react';
 import './Header.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuthUser from './useAuthUser';
+import api from './services/api';
 
 const Header = () => {
-  const { user, loading } = useAuthUser();
+  const { user, loading, setUser } = useAuthUser();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+  try {
+    await api.postData('logout');
+  } catch (error) {
+    // Ignora errores
+  } finally {
+    navigate('/');
+    window.location.reload(); // <-- Fuerza recarga
+  }
+};
 
   return (
     <header className="header">
@@ -14,15 +27,20 @@ const Header = () => {
         <Link to="/nosotros">Sobre nosotros</Link>
         <Link to="/contacto">Contacto</Link>
         
-        {/* Mostrar Login solo si NO hay usuario y no está cargando */}
         {!loading && !user && <Link to="/login">Login</Link>}
         
-     {/* Mostrar Admin Panel solo si el usuario es admin
-     pongo el 1, porque es un booleano, y para que no salga 0, si no es admin */}
         {!loading && user && user.is_admin === 1 && (
           <Link to="/admin">Admin Panel</Link>
-        )}        
-        {/* Saludo en la parte inferior */}
+        )}
+
+        {/* Botón de cerrar sesión */}
+        {!loading && user && (
+          <button onClick={handleLogout} 
+className="logout-btn">
+            Cerrar sesión
+          </button>
+        )}
+
         {!loading && user && (
           <div className="user-greeting">
             <span>¡Hola, {user.usuario}!</span>

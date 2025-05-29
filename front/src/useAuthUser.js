@@ -6,22 +6,26 @@ export default function useAuthUser() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Nueva función para refrescar el usuario manualmente
+  const refreshUser = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/me`, {
+        credentials: 'include'
+      });
+      const data = res.ok ? await res.json() : null;
+      setUser(data || null);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/me`, {
-          credentials: 'include'
-        });
-        const data = res.ok ? await res.json() : null;
-        setUser(data || null);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
+    refreshUser();
+    // eslint-disable-next-line
   }, []);
 
-  return { user, loading };
+  return { user, loading, setUser, refreshUser };
 }

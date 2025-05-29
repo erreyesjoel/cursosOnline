@@ -62,8 +62,12 @@ const Login = () => {
         );
       }
 
-      setSuccessMessage('Registro exitoso! Redirigiendo...');
-      setTimeout(() => navigate('/'), 1500);
+     setSuccessMessage('Registro exitoso! Redirigiendo...');
+      setTimeout(() => {
+        navigate('/');
+        window.location.reload(); // <-- Fuerza recarga tras registro
+      }, 1500);
+
 
         
         } else {
@@ -81,8 +85,11 @@ const Login = () => {
         throw new Error(data.message || 'Credenciales incorrectas');
       }
 
-      setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
-      setTimeout(() => navigate('/'), 1500);
+        setSuccessMessage('Inicio de sesión exitoso! Redirigiendo...');
+      setTimeout(() => {
+        navigate('/');
+        window.location.reload(); // <-- Fuerza recarga tras login
+      }, 1500);
     }
 
     } catch (error) {
