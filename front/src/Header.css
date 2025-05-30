@@ -30,7 +30,7 @@
   color: #fff;
   border: none;
   border-radius: 10px;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.7rem;
   margin-top: 1rem;
   cursor: pointer;
   font-weight: bold;
@@ -58,7 +58,6 @@
   bottom: 20px;
   width: 100%;
   text-align: center;
-  padding: 20px 0; /* Reducido de 360px */
   color: #ecf0f1;
   font-size: 0.9rem;
 }
@@ -69,6 +68,7 @@
   align-items: center;
   position: relative;
   bottom: 20px; /* Lo mantiene en la parte inferior */
+  top: 45%;
   width: 100%;
 }
 
