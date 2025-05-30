@@ -21,32 +21,31 @@ const Header = () => {
 
   return (
     <header className="header">
-      <nav className="nav">
-        <Link to="/">Inicio</Link>
-        <Link to="/cursos">Cursos</Link>
-        <Link to="/nosotros">Sobre nosotros</Link>
-        <Link to="/contacto">Contacto</Link>
-        
-        {!loading && !user && <Link to="/login">Login</Link>}
-        
-        {!loading && user && user.is_admin === 1 && (
-          <Link to="/admin">Admin Panel</Link>
-        )}
+       <nav className="nav">
+    <Link to="/">Inicio</Link>
+    <Link to="/cursos">Cursos</Link>
+    <Link to="/nosotros">Sobre nosotros</Link>
+    <Link to="/contacto">Contacto</Link>
 
-        {/* Botón de cerrar sesión */}
-        {!loading && user && (
-          <button onClick={handleLogout} 
-className="logout-btn">
-            Cerrar sesión
-          </button>
-        )}
+    {!loading && !user && <Link to="/login">Login</Link>}
 
-        {!loading && user && (
-          <div className="user-greeting">
-            <span>¡Hola, {user.usuario}!</span>
-          </div>
-        )}
-      </nav>
+    {!loading && user && user.is_admin === 1 && (
+      <Link to="/admin">Admin Panel</Link>
+    )}
+
+    {/* Contenedor separado para saludo y botón */}
+    {!loading && user && (
+      <div className="user-actions">
+        <div className="user-greeting">
+          <span>¡Hola, {user.usuario}!</span>
+        </div>
+        <button onClick={handleLogout} className="logout-btn">
+          Cerrar sesión
+        </button>
+      </div>
+    )}
+  </nav>
+
     </header>
   );
 };
