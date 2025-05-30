@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthUser from './useAuthUser';
 import api from './services/api'; // Importar api js
+import Notificaciones from './Notificaciones';
 
 const AdminPanel = () => {
   const [cursos, setCursos] = useState([]);
@@ -131,11 +132,7 @@ const AdminPanel = () => {
       <h2>Panel de Administración</h2>
       
       {/* Notificación */}
-      {notificacion && (
-        <div className={`notification ${notificacion.tipo}`}>
-          {notificacion.mensaje}
-        </div>
-      )}
+      <Notificaciones notificacion={notificacion} />
       
       {/* Formulario para crear/editar */}
       <form onSubmit={handleSubmit} className="curso-form">
