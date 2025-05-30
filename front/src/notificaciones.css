@@ -11,6 +11,11 @@
   font-weight: bold;
 }
 
+.notification.fade-out {
+  opacity: 0;
+  transition: opacity 0.7s;
+}
+
 .notification.success {
   background-color: #2ecc71;
 }
