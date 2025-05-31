@@ -1,0 +1,29 @@
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0 1rem 0;
+}
+
+.paginacion button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.paginacion button.activa,
+.paginacion button:focus {
+  background-color: #2980b9;
+  font-weight: bold;
+}
+
+.paginacion button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed; /* sirve para indicar como que ese boton, en ese caso, no se puede "utilizar" */
+}

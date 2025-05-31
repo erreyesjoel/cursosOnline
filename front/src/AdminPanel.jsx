@@ -3,9 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import useAuthUser from './useAuthUser';
 import api from './services/api'; // Importar api js
 import Notificaciones from './Notificaciones';
+import Paginacion from './Paginacion';
+import './paginacion.css';
+
+const CURSOS_POR_PAGINA = 3; // Número de cursos por página
 
 const AdminPanel = () => {
   const [cursos, setCursos] = useState([]);
+  const [paginaActual, setPaginaActual] = useState(1);
   const [cursoEditando, setCursoEditando] = useState(null);
   const [formData, setFormData] = useState({
   titulo: '',
@@ -13,6 +18,22 @@ const AdminPanel = () => {
   duracion: '',
   imagen_url: ''
 });
+
+
+// Calcular cursos a mostrar según la página
+  const totalPaginas = Math.ceil(cursos.length / CURSOS_POR_PAGINA);
+  const cursosPaginados = cursos.slice(
+    (paginaActual - 1) * CURSOS_POR_PAGINA,
+    paginaActual * CURSOS_POR_PAGINA
+  );
+
+  // Si se eliminan cursos y la página queda vacía, retroceder una página
+  useEffect(() => {
+    if (paginaActual > 1 && cursosPaginados.length === 0) {
+      setPaginaActual(paginaActual - 1);
+    }
+  }, [cursos, paginaActual, cursosPaginados.length]);
+
 
 const [editFormData, setEditFormData] = useState({
   titulo: '',
@@ -200,10 +221,11 @@ const handleEditSubmit = async (e) => {
 </form>
 
       {/* Lista de cursos con acciones */}
+     {/* Lista de cursos paginada */}
       <div className="cursos-list">
         <h3>Cursos Existentes</h3>
         <ul>
-          {cursos.map((curso) => (
+          {cursosPaginados.map((curso) => (
             <li key={curso.id}>
               <h4>{curso.titulo}</h4>
               <p>{curso.descripcion}</p>
@@ -214,6 +236,11 @@ const handleEditSubmit = async (e) => {
             </li>
           ))}
         </ul>
+        <Paginacion
+          paginaActual={paginaActual}
+          totalPaginas={totalPaginas}
+          onPageChange={setPaginaActual}
+        />
       </div>
 
 {showEditModal && (
