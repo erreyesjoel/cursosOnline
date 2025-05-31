@@ -27,3 +27,8 @@
   background-color: #bdc3c7;
   cursor: not-allowed; /* sirve para indicar como que ese boton, en ese caso, no se puede "utilizar" */
 }
+
+/* hover, para los botones de siguiente, y los numeros, para que parezcan que sean botones... */
+.paginacion button:hover:not(.activa):not(:disabled) {
+  background-color: #2980b9;
+}
