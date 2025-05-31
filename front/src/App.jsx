@@ -17,6 +17,13 @@ const App = () => {
           <Routes>
             <Route path="/" element={
               <ProtectedRoute publicRoute>
+                {/* Aquí puedes poner una portada o dejarlo vacío */}
+                <h1>Bienvenido a CursosOnline</h1>
+                <p>¡Explora nuestros cursos en la sección Cursos!</p>
+              </ProtectedRoute>
+            } />
+            <Route path="/cursos" element={
+              <ProtectedRoute publicRoute>
                 <Cursos />
               </ProtectedRoute>
             } />
@@ -26,11 +33,11 @@ const App = () => {
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
-            <ProtectedRoute>
-            <AdminPanel />
-          </ProtectedRoute>
-          } 
-/>
+              <ProtectedRoute>
+                <AdminPanel />
+              </ProtectedRoute>
+            } 
+            />
           </Routes>
         </main>
       </div>
