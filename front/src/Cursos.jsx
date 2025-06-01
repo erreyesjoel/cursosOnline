@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from './services/api';
 import useAuthUser from './useAuthUser'; // Asegúrate de importar tu hook
 import Notificaciones from './Notificaciones';
+import './cursos.css'; // Asegúrate de tener un archivo CSS para los estilos de los cursos
 
 const Cursos = () => {
   const [cursos, setCursos] = useState([]);

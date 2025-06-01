@@ -1,188 +1,161 @@
-/* Estilo base del root */
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-  text-align: center;
-}
-
-/* Encabezado principal */
-h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
+/* --- LANDING PAGE --- */
+.landing-hero {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-height: 70vh;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
   margin-bottom: 2rem;
+  overflow: hidden;
 }
 
-/* Contenedor general de cursos */
-.cursos-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem;
-}
-
-/* Tarjeta individual de curso */
-.curso-card {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  padding: 1.5rem;
-  text-align: left;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.landing-content {
+  flex: 1.2;
   display: flex;
   flex-direction: column;
-  height: 100%;
-}
-
-.curso-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
-}
-
-/* Contenido de la tarjeta */
-.curso-contenido {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-/* Imagen del curso */
-.curso-card img {
-  width: 100%;
-  height: 175px;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  object-fit: cover;
-}
-
-/* Descripción corta */
-.curso-descripcion-corta {
-  flex-grow: 1;
-  margin-bottom: 1rem;
-  color: #555;
-}
-
-/* Título y descripción */
-.curso-card h2 {
-  font-size: 1.3rem;
-  color: #34495e;
-  margin-bottom: 0.8rem;
-}
-
-.curso-card p {
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Estilos para duración */
-.curso-card strong {
-  color: #2980b9;
-}
-
-/* Botón Ver más */
-.ver-mas-btn {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-top: auto;
-  transition: background-color 0.3s;
-}
-
-.ver-mas-btn:hover {
-  background-color: #2980b9;
-}
-
-/* Estilos del modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-contenido {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.cerrar-modal {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #555;
-}
-
-.modal-imagen {
-  width: 100%;
-  max-height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-}
-
-.modal-detalles {
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 4rem 3rem 4rem 4rem;
   text-align: left;
+  margin-top: 2.5rem;
 }
 
-.modal-detalles p {
-  margin-bottom: 0.8rem;
-}
-
-.modal-detalles strong {
+.landing-content h1 {
+  font-size: 2.7rem;
   color: #2c3e50;
+  margin-bottom: 1.2rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
-/* Logo original por si lo usas */
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.landing-highlight {
+  color: #3498db;
+  padding: 0.2em 0.5em;
+  border-radius: 10px;
+  font-size: 3rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.landing-content p {
+  font-size: 1.25rem;
+  color: #555;
+  margin-bottom: 2.5rem;
+  max-width: 420px;
+}
+
+.landing-btn {
+  display: inline-block;
+  background: linear-gradient(90deg, #3498db 0%, #6dd5fa 100%);
+  color: #fff;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 4px 16px rgba(52,152,219,0.13);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 1px;
+  border: none;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.landing-btn:hover, .landing-btn:focus {
+  background: linear-gradient(90deg, #217dbb 0%, #3498db 100%);
+  transform: translateY(-2px) scale(1.04) rotate(-1deg);
+  box-shadow: 0 8px 32px rgba(52,152,219,0.18);
+  text-shadow: 0 2px 8px #217dbb33;
+  filter: brightness(1.08) saturate(1.2);
+}
+
+.landing-visual {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 320px;
+  background: none;
+}
+
+.landing-logo {
+  width: 140px;
+  margin-bottom: 2.5rem;
+  z-index: 2;
+  filter: drop-shadow(0 8px 32px #3498db33);
+  animation: logo-float 3s ease-in-out infinite alternate;
+}
+
+@keyframes logo-float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-18px); }
+}
+
+.landing-shape {
+  position: absolute;
+  bottom: 30px;
+  right: 60px;      /* Antes: left: 40px; */
+  left: auto;
+  width: 180px;     /* Más pequeña */
+  height: 180px;
+  background: radial-gradient(circle at 60% 40%, #3498db 60%, #6dd5fa 100%);
+  border-radius: 50% 40% 60% 50%/60% 50% 40% 50%;
+  opacity: 0.13;    /* Más translúcida */
+  z-index: 0;       /* Detrás de logo y burbujas */
+  filter: blur(2px);
+}
+.landing-bubble {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.18;
+  z-index: 0;
+  filter: blur(1px);
+}
+
+.landing-bubble1 {
+  width: 60px;
+  height: 60px;
+  background: #6dd5fa;
+  top: 30px;
+  right: 60px;
+  animation: bubble1 5s infinite alternate;
+}
+.landing-bubble2 {
+  width: 40px;
+  height: 40px;
+  background: #3498db;
+  bottom: 40px;
+  right: 30px;
+  animation: bubble2 7s infinite alternate;
+}
+
+@keyframes bubble1 {
+  from { transform: translateY(0) scale(1);}
+  to { transform: translateY(-20px) scale(1.1);}
+}
+@keyframes bubble2 {
+  from { transform: translateY(0) scale(1);}
+  to { transform: translateY(18px) scale(1.08);}
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .landing-hero {
+    flex-direction: column;
+    min-height: 60vh;
+    padding: 0;
   }
-  to {
-    transform: rotate(360deg);
+  .landing-content {
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    align-items: center;
+    text-align: center;
+    margin-top: 1.5rem;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .landing-visual {
+    min-height: 180px;
+    padding-bottom: 1.5rem;
   }
-}
-
-.read-the-docs {
-  color: #888;
 }
