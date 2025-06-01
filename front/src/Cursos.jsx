@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import api from './services/api'; // Asegúrate de que este archivo exista y esté configurado correctamente
+import api from './services/api';
+import useAuthUser from './useAuthUser'; // Asegúrate de importar tu hook
+import Notificaciones from './Notificaciones';
 
 const Cursos = () => {
   const [cursos, setCursos] = useState([]);
   const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [notificacion, setNotificacion] = useState(null);
 
-useEffect(() => {
-  const obtenerCursos = async () => {
-    try {
-      const data = await api.getData('cursos'); // Usamos la función dentro del objeto api
-      console.log('Cursos obtenidos:', data);
-      setCursos(data);
-    } catch (error) {
-      console.error('Error al cargar los cursos:', error);
-    }
-  };
+  const { user, loading } = useAuthUser();
 
-  obtenerCursos();
-}, []);
+  useEffect(() => {
+    const obtenerCursos = async () => {
+      try {
+        const data = await api.getData('cursos');
+        setCursos(data);
+      } catch (error) {
+        setNotificacion({ tipo: 'error', mensaje: 'Error al cargar los cursos' });
+      }
+    };
+    obtenerCursos();
+  }, []);
 
   const abrirModal = (curso) => {
     setCursoSeleccionado(curso);
@@ -29,8 +32,20 @@ useEffect(() => {
     setModalAbierto(false);
   };
 
+  // Manejar el intento de empezar el curso
+  const handleEmpezarCurso = () => {
+    if (loading) return;
+    if (user) {
+      setNotificacion({ tipo: 'success', mensaje: `¡Has empezado el curso "${cursoSeleccionado.titulo}"!` });
+      // Aquí podrías redirigir o guardar el progreso, etc.
+    } else {
+      setNotificacion({ tipo: 'error', mensaje: 'Debes iniciar sesión para empezar el curso.' });
+    }
+  };
+
   return (
     <div>
+      <Notificaciones notificacion={notificacion} />
       <h1>Cursos</h1>
       <div className="cursos-container">
         {cursos.length > 0 ? (
@@ -78,6 +93,17 @@ useEffect(() => {
               <p><strong>Descripción completa:</strong></p>
               <p>{cursoSeleccionado.descripcion}</p>
               <p><strong>Duración:</strong> {cursoSeleccionado.duracion}</p>
+            </div>
+            {/* Pregunta y botón para empezar el curso */}
+            <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+              <p>¿Quieres empezar este curso?</p>
+              <button 
+                className="ver-mas-btn"
+                onClick={handleEmpezarCurso}
+                style={{ marginTop: '0.5rem' }}
+              >
+                Empezar curso
+              </button>
             </div>
           </div>
         </div>
