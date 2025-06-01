@@ -6,9 +6,16 @@
   min-height: 70vh;
   border-radius: 24px;
   box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
+  animation: fadeInLanding 1.2s cubic-bezier(.39,.575,.565,1) both;
   margin-bottom: 2rem;
   overflow: hidden;
 }
+
+@keyframes fadeInLanding {
+  0% { opacity: 0; transform: translateY(30px);}
+  100% { opacity: 1; transform: none;}
+}
+
 
 .landing-content {
   flex: 1.2;
@@ -25,6 +32,7 @@
   font-size: 2.7rem;
   color: #2c3e50;
   margin-bottom: 1.2rem;
+  text-shadow: 0 2px 12px #6dd5fa22;
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: 1px;

@@ -34,7 +34,7 @@ const App = () => {
                   </div>
                   <div className="landing-visual">
                     <div className="landing-shape"></div>
-                    <img src="/vite.svg" alt="Logo CursosOnline" className="landing-logo" />
+                    <img src="/JE.png" alt="Logo CursosOnline" className="landing-logo" />
                     <div className="landing-bubble landing-bubble1"></div>
                     <div className="landing-bubble landing-bubble2"></div>
                   </div>
